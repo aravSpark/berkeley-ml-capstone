@@ -21,21 +21,23 @@ By answering this question, the model aims to demonstrate how machine learning c
 Can machine learning regression models predict the probability that a borrower will default, based on historical Lending Club data? And which borrower or loan factors have the biggest impact on that risk?
 
 #### Data Sources
-What data will you use to answer you question?
+[Lending Club dataset on Kaggle](https://www.kaggle.com/datasets/wordsforthewise/lending-club)
 
 #### Methodology
-To build and test the model, the project plans to use:
+To build and test the model, the project plans uses:
 
-Linear, Ridge, and Lasso Regression as baseline models
-Random Forest and Gradient Boosting Regressors to capture non-linear patterns
-SHAP values to explain which features most influence predictions
-Evaluation using R², MAE, and RMSE scores
+* Linear, Ridge, and Lasso Regression as baseline models
+* Random Forest and Gradient Boosting Regressors to capture non-linear patterns
+* SHAP values to explain which features most influence predictions
+* Evaluation using R², MAE, and RMSE scores
 
 #### Results
-What did your research find?
+* Linear Regression, Ridge, and Lasso—show almost identical performance, with RMSE ~5,585, MAE ~4,054, and R² ~0.50.
+* Regularization does not significantly improve performance
+This indicates that the relationship between borrower characteristics and loss_amount is largely linear
 
 #### Next steps
-What suggestions do you have for next steps?
+Further modeling using non-Linear Tree-Based Models XGBoost Regressor, RandomForest Regressor
 
 #### Outline of project
 
