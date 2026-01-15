@@ -25,27 +25,13 @@ Can machine learning regression models predict the loss severity of a loan at or
 * Post-issuance features were removed to prevent data leakage. Only information available at the time of loan origination was retained.
 
 #### Methodology
-To build and test the model, the project uses the following approach:
+To build and test the model, the project used the following approach:
 
-**Baseline Modeling:** 
-
-The following linear models were used to establish a baseline:
-
-* Linear Regression
-* Ridge Regression
-* Lasso Regression
-
-These models provided a reference point for performance and helped establish whether relationships between features and loss were primarily linear.  
-
-**Advanced Modeling:** 
-
-To capture non-linear relationships and feature interactions, a LightGBM Regressor was implemented. LightGBM was selected because it:
-
-* Handles large datasets efficiently
-* Captures complex, non-linear patterns
-* Natively supports categorical features through encoding
-
-Hyperparameter tuning was performed using GridSearchCV, and model stability was evaluated using cross-validation.
+* **Preprocessing:** Cleaned 150+ variables and utilizing native categorical handling for high-cardinality features.
+* **Baseline Modeling:** Linear, Ridge, and Lasso regression models to define a performance floor.
+* **Advanced Modeling:** LightGBM to capture non-linear relationships and feature interactions. LightGBM was selected because it handles large datasets efficiently, captures complex, non-linear patterns and natively supports categorical features through encoding.
+* **Optimization:** HalvingGridSearchCV (Successive Halving) for efficient hyperparameter tuning.
+* **Explainability:** SHAP values to decode model logic and identify key risk drivers.
 
 **Evaluation Metrics:**
 
@@ -79,10 +65,14 @@ To ensure interpretability, the final model was analysed using SHAP (SHapley Add
 
 **Key Findings:**
 
-* Loan size, interest rate, loan term are among the strongest drivers of expected loss
-* Higher income alone does not guarantee lower loss severity
+* Loan size and term are the most dominant drivers of loss. While credit quality (Grade/Score) matters, the total exposure (amount at risk) is the primary predictor of loss severity.
+* Income and DTI have limited direct influence on loss severity once the loan structure is accounted for.
+* The significance of "Issue Year" highlights that loss predictions are heavily influenced by shifting external economic cycles.
 * Non-linear models significantly outperform linear baselines in explaining loss variation
 
+**Recommendations:**
+* Implement enhanced due diligence for loans exceeding specific principal thresholds or terms, as these represent the highest severity risks.
+* Given the superior predictive power (16% R² increase), gradient-boosted models like LightGBM should be prioritized over linear models for production-level loss forecasting.
 
 **Limitations and Next Steps**
 
