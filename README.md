@@ -87,7 +87,7 @@ Beyond time of issuance, analyzing the relationship between Loan Amount and Inte
 
 ![SHAP Dependence: Loan Amount & Interest Rate Interaction"](images/shap_dependence_loan_amnt_int_rate.png)
 
-High interest rates (red dots) significantly increase the risk. A large loan with a high interest rate is viewed by the model as far riskier than a large loan with a low rate.
+High interest rates (red dots) significantly increase the risk. A large loan with a high interest rate is viewed by the model as far more riskier than a large loan with a low rate.
 
 **Model Transparency**
 
@@ -103,7 +103,7 @@ This chart illustrates how the model balances conflicting signals. In this insta
 * Loan size and term are dominant drivers, but their impact is non-linear. SHAP interaction analysis confirms that high interest rates act as a risk multiplier on large-principal loans.
 * Income and DTI have limited direct influence on loss severity once the loan structure is accounted for.
 * The significance of Issue Year represents 'Vintage Risk', where the macroeconomic environment at origination outweighs individual credit scores.
-* Non-linear models significantly outperform linear baselines in explaining loss variation
+* Non-linear models significantly outperform linear baselines in explaining loss variation.
 
 **Recommendations:**
 * Implement enhanced due diligence for loans exceeding specific principal thresholds or terms, as these represent the highest severity risks.
@@ -115,7 +115,7 @@ This chart illustrates how the model balances conflicting signals. In this insta
 * The model predicts loss severity but does not explicitly model probability of default.
 * Post-origination borrower behaviour is not available at application time, limiting predictive power.
 * Future enhancements could include a joint Probability of default and Loss given default model.
-* Transitioning from using Issue Year as a proxy for macroeconomic indicators and directly incorporating macroeconomic factors.
+* Transition from using Issue Year as a proxy for macroeconomic indicators and directly incorporate macroeconomic factors.
 
 #### Outline of project
 
