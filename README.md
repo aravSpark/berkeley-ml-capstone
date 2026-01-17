@@ -22,7 +22,8 @@ Can machine learning regression models predict the loss severity of a loan at or
 #### Data Sources
 * [Lending Club dataset on Kaggle](https://www.kaggle.com/datasets/wordsforthewise/lending-club)
 * The dataset contains millions of records from 2007-2018. 
-* Post-issuance features were removed to prevent data leakage. Only information available at the time of loan origination was retained.
+* To facilitate structured analysis, the [Lending Club Data Dictionary](https://github.com/aravSpark/berkeley-ml-capstone/blob/main/data/lending_club_data_dictionary.xlsx) was enriched with an EDA Category column to systematically map 150+ variables into categories Pre-issuance, Candidate Features, Post-Issuance and Identifiers.
+* Post-issuance features were removed to prevent data leakage and ensure real-world applicability at the point of loan application.
 
 #### Methodology
 To build and test the model, the project used the following approach:
@@ -47,10 +48,13 @@ The baseline linear models (Linear Regression, Ridge, and Lasso) showed almost i
 * **RMSE:** ~$5,585 | **MAE:** ~$4,054 | **R²:** ~0.50
 
 LightGBM Model (Final) achieved substantially improved performance:
-* **RMSE:** ~$4,626 | **MAE:** ~$2,808 | **R²:** ~0.66
+* **RMSE:** ~$4,626 (17% reduction)
+* **MAE:** ~$2,808 (30% reduction)
+* **R²:** ~0.66 (16% absolute increase)
 
+![Model Comparison](images/model_performance_comparison.png)
 
-This represents a meaningful improvement over linear baselines, indicating that non-linear effects and feature interactions play an important role in predicting loss severity.
+This meaningful improvement over linear baselines indicates that loan loss severity is governed by non-linear effects and feature interactions such as the compounding risk of high interest rates on large principals
 
 **Model Selection**: 
 
@@ -59,9 +63,14 @@ Hyperparameter tuning on a 200k subset suggested a simpler model, but validation
 **Model Explainability:**
 
 To ensure interpretability, the final model was analysed using SHAP (SHapley Additive exPlanations):
-* Global SHAP importance identified key drivers of loss, including loan amount, interest rate, credit score, loan term, and credit utilisation
-* Exposure-related features (Loan Amount, Term) have a significantly higher impact on loss severity than traditional borrower metrics (Income, DTI).
-  
+* Global SHAP importance identified Issue Year as the primary driver of the model's predictions, followed by loan amount, term, and interest rate.
+* The high importance of Issue Year suggests that macroeconomic factors surrounding the time of loan origination have the most significant impact on loss outcomes.
+* Exposure-related features (Loan Amount, Term) have a significantly higher impact on loss severity than traditional borrower metrics (Income, FICO score, DTI).
+* The model demonstrates extreme sensitivity to the Issue Year of the loan, indicating that the period in which the loan was issued is more predictive of loss than individual credit characteristics.
+
+![SHAP Summary PLot](images/shap_beeswarm.png)
+
+The SHAP summary plot confirms that Issue Year and Loan Amount are the primary drivers of the model's predictions. For these features, high values (red) representing more recent years and larger loan quantities push predictions toward significantly higher expected losses.
 
 **Key Findings:**
 
@@ -83,6 +92,7 @@ To ensure interpretability, the final model was analysed using SHAP (SHapley Add
 #### Outline of project
 
 - [Jupyter Notebook (Google Colab)](https://colab.research.google.com/drive/1TLVYFW1jBLabtq1brgnH-dntougZeetL?usp=sharing)
+- [Jupyter Notebook (Static Github version)](https://github.com/aravSpark/berkeley-ml-capstone/blob/main/LoanIQ.ipynb) 
 
 
 ##### Contact and Further Information
