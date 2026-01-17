@@ -28,7 +28,7 @@ Can machine learning regression models predict the loss severity of a loan at or
 #### Methodology
 To build and test the model, the project used the following approach:
 
-* **Preprocessing:** Cleaned 150+ variables and utilizing native categorical handling for high-cardinality features.
+* **Preprocessing:** Cleaned 150+ variables and utilised native categorical handling for high-cardinality features.
 * **Baseline Modeling:** Linear, Ridge, and Lasso regression models to define a performance floor.
 * **Advanced Modeling:** LightGBM to capture non-linear relationships and feature interactions. LightGBM was selected because it handles large datasets efficiently, captures complex, non-linear patterns and natively supports categorical features through encoding.
 * **Optimization:** HalvingGridSearchCV (Successive Halving) for efficient hyperparameter tuning.
@@ -54,44 +54,72 @@ LightGBM Model (Final) achieved substantially improved performance:
 
 ![Model Comparison](images/model_performance_comparison.png)
 
-This meaningful improvement over linear baselines indicates that loan loss severity is governed by non-linear effects and feature interactions such as the compounding risk of high interest rates on large principals
+This meaningful improvement over linear baselines indicated that loan loss severity was governed by non-linear effects and feature interactions such as the compounding risk of high interest rates on large principal amounts.
 
 **Model Selection**: 
 
 Hyperparameter tuning on a 200k subset suggested a simpler model, but validation on the full 2M-row dataset confirmed that the higher-capacity initial model (800 trees, 63 leaves) was superior for capturing deep risk patterns without overfitting.
 
-**Model Explainability:**
+#### Model Explainability
 
 To ensure interpretability, the final model was analysed using SHAP (SHapley Additive exPlanations):
+
 * Global SHAP importance identified Issue Year as the primary driver of the model's predictions, followed by loan amount, term, and interest rate.
 * The high importance of Issue Year suggests that macroeconomic factors surrounding the time of loan origination have the most significant impact on loss outcomes.
 * Exposure-related features (Loan Amount, Term) have a significantly higher impact on loss severity than traditional borrower metrics (Income, FICO score, DTI).
 * The model demonstrates extreme sensitivity to the Issue Year of the loan, indicating that the period in which the loan was issued is more predictive of loss than individual credit characteristics.
 
-![SHAP Summary PLot](images/shap_beeswarm.png)
+![SHAP Summary Plot](images/shap_beeswarm.png)
 
 The SHAP summary plot confirms that Issue Year and Loan Amount are the primary drivers of the model's predictions. For these features, high values (red) representing more recent years and larger loan quantities push predictions toward significantly higher expected losses.
 
+**Compounding of Risks**
+
+The interaction between Issue Year and Loan Amount was analysed to understand the model's sensitivity. 
+
+![SHAP Dependence Plot: Impact of Issue Year"](images/shap_dependence_issue_year.png)
+
+The dependence plot confirms a compounding of risks. Recently issued loans generally show higher expected losses, this risk is significantly higher for large loans issued in those years. This suggests that the model is identifying specific vulnerabilities in large-scale lending during recent economic cycles.
+
+**Cost of Large Loans**
+
+Beyond time of issuance, analyzing the relationship between Loan Amount and Interest Rate revealed that while large loans are naturally riskier, the Interest Rate acts as a risk multiplier.
+
+![SHAP Dependence: Loan Amount & Interest Rate Interaction"](images/shap_dependence_loan_amnt_int_rate.png)
+
+High interest rates (red dots) significantly increase the risk. A large loan with a high interest rate is viewed by the model as far riskier than a large loan with a low rate.
+
+**Model Transparency**
+
+SHAP Waterfall Plot was used to decode a single prediction and demonstrate model transparency at the borrower level, 
+
+
+![Explaining a Single Loan Prediction"](images/shap_waterfall_case_study.png)
+
+This chart illustrates how the model balances conflicting signals. In this instance, a large loan amount pushed the risk up but the model significantly lowered the final predicted loss because the loan belonged to a safer year (2014). This level of detail provides the reasons necessary for decision support.
+
 **Key Findings:**
 
-* Loan size and term are the most dominant drivers of loss. While credit quality (Grade/Score) matters, the total exposure (amount at risk) is the primary predictor of loss severity.
+* Loan size and term are dominant drivers, but their impact is non-linear. SHAP interaction analysis confirms that high interest rates act as a risk multiplier on large-principal loans.
 * Income and DTI have limited direct influence on loss severity once the loan structure is accounted for.
-* The significance of "Issue Year" highlights that loss predictions are heavily influenced by shifting external economic cycles.
+* The significance of Issue Year represents 'Vintage Risk', where the macroeconomic environment at origination outweighs individual credit scores.
 * Non-linear models significantly outperform linear baselines in explaining loss variation
 
 **Recommendations:**
 * Implement enhanced due diligence for loans exceeding specific principal thresholds or terms, as these represent the highest severity risks.
+* Apply tiered exposure limits based on loan size and interest rates, establish stricter caps for high-interest-rate categories to mitigate compounding of loss severity.
 * Given the superior predictive power (16% R² increase), gradient-boosted models like LightGBM should be prioritized over linear models for production-level loss forecasting.
 
 **Limitations and Next Steps**
 
 * The model predicts loss severity but does not explicitly model probability of default.
 * Post-origination borrower behaviour is not available at application time, limiting predictive power.
-* Future enhancements could include a joint Probability of default and Loss given default modelling and incorporation of macroeconomic factors.
+* Future enhancements could include a joint Probability of default and Loss given default model.
+* Transitioning from using Issue Year as a proxy for macroeconomic indicators and directly incorporating macroeconomic factors.
 
 #### Outline of project
 
-- [Jupyter Notebook (Google Colab)](https://colab.research.google.com/drive/1TLVYFW1jBLabtq1brgnH-dntougZeetL?usp=sharing)
+- [Jupyter Notebook (Google Colab)](https://colab.research.google.com/drive/1_WKRP-RW_4Ti_xzVVe8DS-6fH2WW1WSU?usp=sharing)
 - [Jupyter Notebook (Static Github version)](https://github.com/aravSpark/berkeley-ml-capstone/blob/main/LoanIQ.ipynb) 
 
 
